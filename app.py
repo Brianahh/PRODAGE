@@ -46,9 +46,9 @@ def cropimage(image):
     x1, y1 = x0 + 2 * half, y0 + 2 * half 
 
     if x0 < 0:
-        x0 == 0
+        x0 = 0
     if y0 < 0:
-        y0 == 0
+        y0 = 0
 
     
     return image[y0:y1 ,x0:x1]
