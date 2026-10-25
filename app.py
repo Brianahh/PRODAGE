@@ -3,8 +3,9 @@ from PIL import Image
 import numpy as np
 import cv2
 import torch
-from torcht import Age_Model
+from torcht import Age_model_Resnet
 import torch.nn as nn
+from torchvision import models
 
 
 
@@ -64,12 +65,12 @@ with col2:
         cropped = cropimage(bgr_img)   
 
         if cropped is not None:
-            cropped = cv2.resize(cropped, (128, 128), interpolation=cv2.INTER_AREA)
+            cropped = cv2.resize(cropped, (224,224), interpolation=cv2.INTER_AREA)
             
             st.image(cv2.cvtColor(cropped, cv2.COLOR_BGR2RGB), caption="My photo")
 
-            cropped = cv2.cvtColor(cropped, cv2.COLOR_BGR2GRAY)
             img_tensor = torch.tensor(cropped)
+            img_tensor = img_tensor.permute(2,0,1)
         else:
             st.write("No face detected — try again.")
 
@@ -80,15 +81,28 @@ with col2:
 if img_tensor is not None:
     st.write(img_tensor.shape)
 
-model = Age_Model()
-model.load_state_dict(torch.load("age_modelfinal3.pth", map_location=torch.device("cpu")))
+resnet_model = models.resnet18(weights=None)
+model = Age_model_Resnet(
+    pretrained_model=resnet_model
+)
+
+device = torch.device("cpu")
+
+state_dict = torch.load(
+    "resnet_model.pth",
+    map_location=device,
+    weights_only=True
+)
+
+model.load_state_dict(state_dict)
+
+
 model.eval()
 
 
 if img_tensor is not None:
     print()
     test_img = img_tensor.float() / 255.
-    test_img = test_img.unsqueeze(0)
     test_img = test_img.unsqueeze(0)
 
 
