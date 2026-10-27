@@ -111,5 +111,5 @@ if img_tensor is not None:
         y_pred = y_pred.numpy() * 80
 
     age = y_pred
-    st.write("Predicted age:", round(age))
+    st.write("Predicted age:", round(age.item()))
     
